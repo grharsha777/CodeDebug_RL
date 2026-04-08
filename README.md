@@ -1,3 +1,17 @@
+---
+title: CodeDebug-RL
+emoji: 🐛
+colorFrom: indigo
+colorTo: blue
+sdk: docker
+app_port: 7860
+tags:
+- openenv
+- rl
+- coding-agent
+- self-correction
+---
+
 <div align="center">
 
 # 🐛 CodeDebug-RL Environment
