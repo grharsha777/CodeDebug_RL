@@ -186,7 +186,7 @@ class CodeDebugEnvironment:
             Tuple of (observation, reward, done, info)
         """
         if self._state is None:
-            raise RuntimeError("Environment not initialized. Call reset() first.")
+            raise RuntimeError("Session expired or not started. Please click 'Reset' or refresh to start a new task.")
 
         if self._state.done:
             raise RuntimeError("Episode already terminated. Call reset() to start a new one.")

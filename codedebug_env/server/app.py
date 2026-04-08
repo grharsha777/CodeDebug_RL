@@ -368,6 +368,11 @@ _WEB_UI_HTML = """\
 <script>
 const API = window.location.origin;
 
+window.onload = () => {
+  // Auto-reset on first load
+  resetEnv();
+};
+
 async function resetEnv() {
   const diff = document.getElementById('difficulty').value;
   const body = {};
@@ -396,12 +401,19 @@ async function submitPatch() {
   const action = { patched_code: code, patch_format: 'full_replace' };
   if (reasoning.trim()) action.reasoning = reasoning.trim();
 
+  const btn = document.querySelector('.btn-primary');
+  const oldText = btn.textContent;
+  btn.textContent = '⏳ Processing...';
+  btn.disabled = true;
+ 
   try {
     const res = await fetch(`${API}/step`, {
       method: 'POST', headers: {'Content-Type':'application/json'},
       body: JSON.stringify({ action })
     });
     const data = await res.json();
+    btn.textContent = oldText;
+    btn.disabled = false;
     if (res.ok && data.observation) {
       updateUI(data.observation);
       if (data.done) {
