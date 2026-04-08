@@ -336,25 +336,44 @@ class CodeDebugEnvironment:
             )
 
         # ── Build observation ────────────────────────────────────────────
-        observation = self._build_observation(
-            execution_result_dict=self._execution_to_obs(exec_result),
-            reward_breakdown=reward_breakdown,
-            previous_code=previous_code,
-            diff_text=diff_text,
-        )
+        try:
+            observation = self._build_observation(
+                execution_result_dict=self._execution_to_obs(exec_result),
+                reward_breakdown=reward_breakdown,
+                previous_code=previous_code,
+                diff_text=diff_text,
+            )
 
-        info: dict[str, Any] = {
-            "episode_id": self._episode_id,
-            "step_duration_ms": round(step_duration * 1000, 2),
-            "is_improvement": exec_result.passed > (
-                state.history[-2].execution_result.passed
-                if len(state.history) >= 2
-                else state.baseline_passed
-            ),
-            "grader_score": (exec_result.passed / exec_result.total_tests) if exec_result.total_tests > 0 else 0.0,
-        }
+            # Robust info dict calculation
+            try:
+                prev_pass = (
+                    state.history[-2].execution_result.passed
+                    if len(state.history) >= 2
+                    else state.baseline_passed
+                )
+                is_improvement = bool(exec_result.passed > prev_pass)
+            except (IndexError, AttributeError):
+                is_improvement = False
 
-        return observation, reward_breakdown.total, done, info
+            total = exec_result.total_tests
+            grader_score = (float(exec_result.passed) / float(total)) if total > 0 else 0.0
+
+            info: dict[str, Any] = {
+                "episode_id": self._episode_id,
+                "step_duration_ms": round(step_duration * 1000, 2),
+                "is_improvement": is_improvement,
+                "grader_score": grader_score,
+                "total_tests": total,
+                "passed_tests": exec_result.passed,
+            }
+
+            return observation, float(reward_breakdown.total), done, info
+
+        except Exception as e:
+            logger.exception("Final processing failure in step()")
+            # Fallback to a bare-minimum successful return if observation building fails
+            # but usually, this will bubble up to the app.py 500 handler which is now handled by UI.
+            raise RuntimeError(f"Step completion failed: {e}")
 
     # ─── Get State ────────────────────────────────────────────────────────
 

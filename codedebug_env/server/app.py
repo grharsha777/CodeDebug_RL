@@ -378,12 +378,16 @@ async function resetEnv() {
       method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body)
     });
     const data = await res.json();
-    const obs = data.observation;
-    document.getElementById('code').value = obs.current_code;
-    updateUI(obs);
-    document.getElementById('envStatus').textContent = 'active';
-    document.getElementById('diffView').textContent = 'Episode started — submit your first patch.';
-  } catch(e) { alert('Reset failed: ' + e.message); }
+    if (res.ok && data.observation) {
+      const obs = data.observation;
+      document.getElementById('code').value = obs.current_code;
+      updateUI(obs);
+      document.getElementById('envStatus').textContent = 'active';
+      document.getElementById('diffView').textContent = 'Episode started — submit your first patch.';
+    } else {
+      alert('Reset failed: ' + (data.detail || 'Unknown server error'));
+    }
+  } catch(e) { alert('Reset failed (network/parsing): ' + e.message); }
 }
 
 async function submitPatch() {
@@ -398,12 +402,16 @@ async function submitPatch() {
       body: JSON.stringify({ action })
     });
     const data = await res.json();
-    updateUI(data.observation);
-    if (data.done) {
-      document.getElementById('envStatus').textContent =
-        data.observation.done_reason === 'solved' ? '✅ SOLVED!' : '❌ ' + data.observation.done_reason;
+    if (res.ok && data.observation) {
+      updateUI(data.observation);
+      if (data.done) {
+        document.getElementById('envStatus').textContent =
+          data.observation.done_reason === 'solved' ? '✅ SOLVED!' : '❌ ' + data.observation.done_reason;
+      }
+    } else {
+      alert('Step failed: ' + (data.detail || 'Unknown server error'));
     }
-  } catch(e) { alert('Step failed: ' + e.message); }
+  } catch(e) { alert('Step failed (network/parsing): ' + e.message); }
 }
 
 function updateUI(obs) {
