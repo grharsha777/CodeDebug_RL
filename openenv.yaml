@@ -93,6 +93,10 @@ docker:
     - CODEDEBUG_MAX_STEPS=10
     - CODEDEBUG_TIMEOUT=30
     - ENABLE_WEB_INTERFACE=true
+    - API_BASE_URL=https://router.huggingface.co/v1
+    - MODEL_NAME=Qwen/Qwen2.5-72B-Instruct
+    - HF_TOKEN=<set-in-space-secret>
+    - OPENAI_API_KEY=<optional-alias-for-hf-token>
 
 # ─── Task Configuration ─────────────────────────────────────────────────────
 
@@ -147,6 +151,11 @@ metadata:
   domain: code_debugging
   task_type: iterative_repair
   agent_type: LLM
+  required_runtime_env:
+    - API_BASE_URL
+    - MODEL_NAME
+    - HF_TOKEN
+    - OPENAI_API_KEY
   training_compatible:
     - GRPO
     - PPO

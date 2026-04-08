@@ -150,6 +150,23 @@ cd codedebug-rl
 pip install -e ".[dev]"
 ```
 
+### Required Environment Variables
+
+Create local environment variables or copy from `.env.example` before running the baseline inference script:
+
+```bash
+export API_BASE_URL="https://router.huggingface.co/v1"
+export MODEL_NAME="Qwen/Qwen2.5-72B-Instruct"
+export HF_TOKEN="your_hugging_face_token_here"
+export OPENAI_API_KEY="optional_openai_api_key_here"
+```
+
+Notes:
+
+- `HF_TOKEN` is the primary secret expected by `inference.py` for the Hugging Face router path
+- `OPENAI_API_KEY` remains available as an optional fallback if you want to target the OpenAI API instead
+- On Hugging Face Spaces, set these in the Space Secrets / Variables configuration
+
 ### Run the Demo
 
 ```bash
@@ -312,9 +329,10 @@ CodeDebug-RL provides a reproducible baseline inference script to evaluate agent
 Run the provided `inference.py` using the OpenAI client spec:
 
 ```bash
-export API_BASE_URL="https://api.openai.com/v1"
-export MODEL_NAME="gpt-4o-mini"
-export HF_TOKEN="your_token_here"
+export API_BASE_URL="https://router.huggingface.co/v1"
+export MODEL_NAME="Qwen/Qwen2.5-72B-Instruct"
+export HF_TOKEN="your_hugging_face_token_here"
+export OPENAI_API_KEY="optional_openai_api_key_here"
 
 python inference.py
 ```

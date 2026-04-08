@@ -39,6 +39,23 @@ LIVE_BASELINE_PATH = ROOT_DIR / "baseline_results.json"
 REFERENCE_BASELINE_PATH = ROOT_DIR / "configs" / "reference_baseline.json"
 DEFAULT_TASK_DIR = ROOT_DIR / "data" / "tasks"
 
+
+def _load_local_env() -> None:
+    """Best-effort .env loader for local development."""
+    env_file = ROOT_DIR / ".env"
+    if not env_file.exists():
+        return
+
+    for raw_line in env_file.read_text(encoding="utf-8").splitlines():
+        line = raw_line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, value = line.split("=", 1)
+        os.environ.setdefault(key.strip(), value.strip())
+
+
+_load_local_env()
+
 MAX_STEPS = int(os.environ.get("CODEDEBUG_MAX_STEPS", "10"))
 EXECUTION_TIMEOUT = float(os.environ.get("CODEDEBUG_TIMEOUT", "30"))
 ENABLE_WEB = os.environ.get("ENABLE_WEB_INTERFACE", "false").lower() == "true"
@@ -246,9 +263,10 @@ def _build_compliance_payload(environment: CodeDebugEnvironment) -> dict[str, An
             "task_count": environment.task_loader.task_count,
         },
         "required_env": {
-            "API_BASE_URL": os.environ.get("API_BASE_URL", "https://api.openai.com/v1"),
-            "MODEL_NAME": os.environ.get("MODEL_NAME", "gpt-4o-mini"),
+            "API_BASE_URL": os.environ.get("API_BASE_URL", "https://router.huggingface.co/v1"),
+            "MODEL_NAME": os.environ.get("MODEL_NAME", "Qwen/Qwen2.5-72B-Instruct"),
             "HF_TOKEN": "configured" if os.environ.get("HF_TOKEN") else "required",
+            "OPENAI_API_KEY": "configured" if os.environ.get("OPENAI_API_KEY") else "optional",
         },
         "openenv": spec.get("environment", {}),
         "docker": spec.get("docker", {}),

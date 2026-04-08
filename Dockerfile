@@ -36,7 +36,9 @@ ENV PORT=7860 \
     CODEDEBUG_MAX_STEPS=10 \
     CODEDEBUG_TIMEOUT=30 \
     ENABLE_WEB_INTERFACE=true \
-    CODEDEBUG_TASK_DIR=""
+    CODEDEBUG_TASK_DIR="" \
+    API_BASE_URL="https://router.huggingface.co/v1" \
+    MODEL_NAME="Qwen/Qwen2.5-72B-Instruct"
 
 EXPOSE 7860
 
