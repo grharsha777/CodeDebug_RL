@@ -153,6 +153,10 @@ class CodeDebugLocalClient:
         from codedebug_env.server.environment import CodeDebugEnvironment
         self._env = CodeDebugEnvironment(**env_kwargs)
 
+    def close(self) -> None:
+        """Parity method with the HTTP client; no-op for local execution."""
+        return None
+
     def reset(
         self,
         task_id: str | None = None,

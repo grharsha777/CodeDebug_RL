@@ -385,3 +385,22 @@ class TaskLoader:
             }
             for t in self._tasks.values()
         ]
+
+    def get_task_catalog(self) -> list[dict[str, Any]]:
+        """Return rich task metadata for product-facing UIs."""
+        return [
+            {
+                "task_id": task.task_id,
+                "difficulty": task.difficulty.value,
+                "description": task.description,
+                "tags": task.tags,
+                "has_reference_solution": task.reference_solution is not None,
+                "test_filename": task.test_filename,
+                "source_filename": task.canonical_filename,
+                "metadata": task.metadata,
+            }
+            for task in sorted(
+                self._tasks.values(),
+                key=lambda task: (task.difficulty.value, task.task_id),
+            )
+        ]

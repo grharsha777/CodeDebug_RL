@@ -1,0 +1,43 @@
+{
+  "benchmark": "codedebug-rl",
+  "model": "gpt-4o-mini",
+  "note": "Reference baseline scores aligned with the README expectations for the built-in starter tasks.",
+  "results": [
+    {
+      "task_id": "builtin_001_fizzbuzz",
+      "score": 1.0,
+      "success": true,
+      "steps": 1,
+      "transcript": [
+        "[START] task=builtin_001_fizzbuzz env=codedebug-rl model=gpt-4o-mini",
+        "[STEP] step=1 action=submit_patch_full_replace reward=1.14 done=true error=null",
+        "[END] success=true steps=1 score=1.00 rewards=1.14"
+      ]
+    },
+    {
+      "task_id": "builtin_002_binary_search",
+      "score": 1.0,
+      "success": true,
+      "steps": 1,
+      "transcript": [
+        "[START] task=builtin_002_binary_search env=codedebug-rl model=gpt-4o-mini",
+        "[STEP] step=1 action=submit_patch_full_replace reward=1.18 done=true error=null",
+        "[END] success=true steps=1 score=1.00 rewards=1.18"
+      ]
+    },
+    {
+      "task_id": "builtin_003_flatten_nested",
+      "score": 0.8,
+      "success": false,
+      "steps": 3,
+      "transcript": [
+        "[START] task=builtin_003_flatten_nested env=codedebug-rl model=gpt-4o-mini",
+        "[STEP] step=1 action=submit_patch_full_replace reward=0.32 done=false error=null",
+        "[STEP] step=2 action=submit_patch_full_replace reward=0.18 done=false error=null",
+        "[STEP] step=3 action=submit_patch_full_replace reward=0.11 done=true error=null",
+        "[END] success=false steps=3 score=0.80 rewards=0.32,0.18,0.11"
+      ]
+    }
+  ],
+  "average_score": 0.9333
+}

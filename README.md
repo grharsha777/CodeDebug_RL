@@ -164,14 +164,22 @@ This runs a complete 3-step episode showing:
 ### Start the Server
 
 ```bash
-# API only
+# API + benchmark workbench
 uvicorn codedebug_env.server.app:app --reload
 
-# With interactive web interface
+# Explicitly set the web flag for HF Spaces / deployment configs
 ENABLE_WEB_INTERFACE=true uvicorn codedebug_env.server.app:app --reload
 ```
 
-Then open `http://localhost:8000` for the interactive debugger UI.
+Then open `http://localhost:8000` for the benchmark workbench UI.
+
+### Workbench Overview
+
+The web interface is now organized into three review-friendly surfaces:
+
+1. **Workbench** — live episode control, structured failure analysis, code patching, score/reward trajectory, and step history
+2. **Benchmark** — easy/medium/hard task ladder, reference or live baseline scores, recent episode telemetry, and transcript artifacts
+3. **System** — OpenEnv schema, Docker/deployment facts, required inference environment variables, and compliance metadata
 
 ---
 
@@ -310,6 +318,12 @@ export HF_TOKEN="your_token_here"
 
 python inference.py
 ```
+
+The script now:
+
+1. Emits strict `[START]`, `[STEP]`, and `[END]` stdout lines for each task
+2. Computes normalized task scores in `[0, 1]`
+3. Writes a `baseline_results.json` artifact in the repo root so the web workbench can display the latest baseline results and transcripts
 
 ### Expected Baseline Scores
 

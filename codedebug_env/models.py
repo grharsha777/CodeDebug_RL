@@ -209,6 +209,7 @@ class CodeDebugState(BaseModel):
     task: TaskSpec
     original_code: str
     current_code: str
+    baseline_execution: ExecutionResult | None = None
     baseline_passed: int = 0
     baseline_total: int = 0
     best_passed: int = 0

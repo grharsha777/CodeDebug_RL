@@ -113,6 +113,10 @@ class TelemetryCollector:
         """Return the N most recent episode summaries."""
         return self._episode_summaries[-n:]
 
+    def get_episode_steps(self, episode_id: str) -> list[StepMetric]:
+        """Return recorded step metrics for a specific episode."""
+        return [metric for metric in self._step_metrics if metric.episode_id == episode_id]
+
     def get_aggregate_stats(self) -> dict[str, Any]:
         """Compute aggregate statistics across all recorded episodes."""
         if not self._episode_summaries:
