@@ -30,8 +30,8 @@ Thumbs.db
 htmlcov/
 .pytest_report.json
 
-# Sandbox temp files
-codedebug_*/
+# Sandbox temp files (ignores dynamic temp dirs but keeps core pkg)
+codedebug_sandbox_*/
 
 # Docker
 .docker/
