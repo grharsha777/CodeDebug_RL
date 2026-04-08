@@ -38,6 +38,7 @@ dependencies = [
     "httpx>=0.24.0",
     "pyyaml>=6.0",
     "pytest>=7.0",
+    "openenv-core>=0.2.0",
 ]
 
 [project.optional-dependencies]
@@ -58,6 +59,7 @@ Documentation = "https://github.com/codedebug-rl/codedebug-rl#readme"
 Repository = "https://github.com/codedebug-rl/codedebug-rl"
 
 [project.scripts]
+server = "server.app:app"
 codedebug-server = "codedebug_env.server.app:app"
 
 [tool.setuptools.packages.find]
