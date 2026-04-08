@@ -21,6 +21,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 FROM deps AS app
 WORKDIR /app
 
+# Create non-root user for security
+RUN useradd -m -u 1000 appuser
+
 # Copy project files
 COPY pyproject.toml .
 COPY codedebug_env/ codedebug_env/
@@ -30,6 +33,9 @@ COPY inference.py .
 
 # Install the package itself
 RUN pip install --no-cache-dir -e .
+
+# Switch to non-root user
+USER appuser
 
 # Default environment variables for HF Spaces
 ENV PORT=7860 \
