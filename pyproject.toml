@@ -59,7 +59,7 @@ Documentation = "https://github.com/codedebug-rl/codedebug-rl#readme"
 Repository = "https://github.com/codedebug-rl/codedebug-rl"
 
 [project.scripts]
-server = "server.app:app"
+server = "server.app:main"
 codedebug-server = "codedebug_env.server.app:app"
 
 [tool.setuptools.packages.find]
