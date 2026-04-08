@@ -1,0 +1,12 @@
+{
+  "task_id": "matrix_ops",
+  "difficulty": "hard",
+  "canonical_filename": "solution.py",
+  "test_filename": "test_solution.py",
+  "description": "matrix_multiply has wrong result dimensions and incorrect index in the inner multiplication. transpose uses wrong range bound, producing a square matrix instead of properly transposing rectangular matrices.",
+  "tags": ["math", "indexing", "logic", "hard", "matrices"],
+  "metadata": {
+    "num_bugs": 3,
+    "lines_to_fix": 3
+  }
+}

@@ -1,0 +1,33 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# CodeDebug-RL — Default Environment Configuration
+# ─────────────────────────────────────────────────────────────────────────────
+
+environment:
+  max_steps: 10
+  max_consecutive_invalid: 3
+  execution_timeout_s: 30.0
+
+task_loading:
+  load_builtin: true
+  task_directory: ""   # Set to "data/tasks" for custom tasks
+  default_difficulty: null  # null = sample from all difficulties
+
+sandbox:
+  cleanup: true
+  max_file_size_bytes: 524288  # 512 KB
+  blocked_imports:
+    - subprocess
+    - shutil
+    - socket
+    - http
+    - ctypes
+  allow_network: false
+
+server:
+  host: "0.0.0.0"
+  port: 8000
+  enable_web_interface: false
+  log_level: "info"
+
+telemetry:
+  enable_structured_logging: true

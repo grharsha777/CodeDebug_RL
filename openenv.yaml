@@ -1,0 +1,164 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# CodeDebug-RL — OpenEnv Environment Specification
+# ─────────────────────────────────────────────────────────────────────────────
+
+name: codedebug-rl
+version: "1.0.0"
+description: >
+  An RL environment for training self-correcting coding agents through
+  iterative bug repair. The agent receives a buggy Python program and
+  pytest suite, then iteratively patches the code until all tests pass.
+  Features a sophisticated 7-component reward system with partial credit,
+  regression penalties, and patch efficiency bonuses.
+
+author: CodeDebug-RL Team
+license: MIT
+
+# ─── Environment Interface ───────────────────────────────────────────────────
+
+environment:
+  type: http
+  entrypoint: codedebug_env.server.app:app
+  port: 7860
+  health_endpoint: /health
+
+  endpoints:
+    reset:
+      method: POST
+      path: /reset
+      description: Start a new debugging episode
+    step:
+      method: POST
+      path: /step
+      description: Submit a code patch and receive feedback
+    state:
+      method: GET
+      path: /state
+      description: Get current environment state
+
+  action_space:
+    type: object
+    model: codedebug_env.models.CodeDebugAction
+    fields:
+      patched_code:
+        type: string
+        required: true
+        description: Patched source code (full replacement or unified diff)
+      reasoning:
+        type: string
+        required: false
+        description: Agent's bug analysis and fix rationale
+      patch_format:
+        type: enum
+        values: [full_replace, unified_diff]
+        default: full_replace
+      declare_bug_type:
+        type: list[string]
+        required: false
+      commit_message:
+        type: string
+        required: false
+
+  observation_space:
+    type: object
+    model: codedebug_env.models.CodeDebugObservation
+    fields:
+      task_id: { type: string }
+      instruction: { type: string }
+      current_code: { type: string }
+      test_summary: { type: object }
+      test_output: { type: string }
+      failed_tests: { type: list }
+      passed_tests: { type: list }
+      syntax_valid: { type: boolean }
+      execution_status: { type: string }
+      step_index: { type: integer }
+      max_steps: { type: integer }
+      reward_breakdown: { type: object }
+      cumulative_score: { type: float }
+      done: { type: boolean }
+      done_reason: { type: string, nullable: true }
+      diff_from_previous: { type: string, nullable: true }
+      hint: { type: string, nullable: true }
+
+# ─── Docker Configuration ────────────────────────────────────────────────────
+
+docker:
+  dockerfile: Dockerfile
+  build_context: .
+  image_name: codedebug-rl
+  ports:
+    - "7860:7860"
+  environment:
+    - CODEDEBUG_MAX_STEPS=10
+    - CODEDEBUG_TIMEOUT=30
+    - ENABLE_WEB_INTERFACE=true
+
+# ─── Task Configuration ─────────────────────────────────────────────────────
+
+tasks:
+  builtin_count: 3
+  difficulties: [easy, medium, hard]
+  categories:
+    - type-error
+    - off-by-one
+    - logic
+    - recursion
+    - indexing
+    - data-structures
+  extensible: true
+  custom_task_dir: data/tasks/
+
+# ─── Reward System ───────────────────────────────────────────────────────────
+
+reward:
+  components:
+    - name: partial_test_credit
+      weight: 0.4
+      description: Proportional improvement in test pass rate
+    - name: full_solve_bonus
+      weight: 1.0
+      description: Terminal bonus for solving all tests
+    - name: regression_penalty
+      weight: -0.3
+      description: Penalty for previously-passing tests that now fail
+    - name: syntax_error_penalty
+      weight: -0.5
+      description: Penalty for unparseable code submissions
+    - name: runtime_penalty
+      weight: -0.2
+      description: Penalty for crashes or timeouts
+    - name: patch_efficiency
+      weight: 0.1
+      description: Bonus for minimal, targeted patches
+    - name: reasoning_quality
+      weight: 0.05
+      description: Bonus for structured bug analysis
+  shaping:
+    - duplicate_penalty
+    - noop_penalty
+    - improvement_streak_bonus
+    - early_solve_bonus
+  clip_range: [-2.0, 2.0]
+
+# ─── Metadata ────────────────────────────────────────────────────────────────
+
+metadata:
+  domain: code_debugging
+  task_type: iterative_repair
+  agent_type: LLM
+  training_compatible:
+    - GRPO
+    - PPO
+    - DPO
+    - expert_iteration
+  frameworks:
+    - TRL
+    - OpenRLHF
+    - veRL
+  tags:
+    - self-correction
+    - post-training
+    - code-generation
+    - openenv
+    - code-debugging

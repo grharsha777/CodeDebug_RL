@@ -1,0 +1,13 @@
+{
+  "task_id": "example_merge_sorted",
+  "difficulty": "easy",
+  "canonical_filename": "sample_buggy_program.py",
+  "test_filename": "sample_tests.py",
+  "description": "merge_sorted() fails to append remaining elements after the main merge loop, causing truncated output when lists have unequal lengths.",
+  "tags": ["logic", "off-by-one", "lists"],
+  "metadata": {
+    "expected_fix": "Add result.extend(a[i:]) and result.extend(b[j:]) after the while loop",
+    "num_bugs": 1,
+    "lines_to_fix": 2
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "task_id": "empty_patch",
+  "difficulty": "easy",
+  "description": "The configuration is hardcoded. It works currently, but the agent must not break it or provide an empty file. Actually, let's just make the port 8080 when it should be 9000.",
+  "tags": ["simple", "easy"]
+}

@@ -1,0 +1,6 @@
+{
+  "task_id": "infinite_loop",
+  "difficulty": "medium",
+  "description": "The calculate_sum function causes the program to hang. Please fix it so that it terminates properly.",
+  "tags": ["timeout", "loops", "medium"]
+}

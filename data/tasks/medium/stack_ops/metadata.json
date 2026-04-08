@@ -1,0 +1,12 @@
+{
+  "task_id": "stack_ops",
+  "difficulty": "medium",
+  "canonical_filename": "solution.py",
+  "test_filename": "test_solution.py",
+  "description": "Stack.pop() and Stack.peek() use index 0 (FIFO behavior) instead of the last element (LIFO behavior). This causes incorrect stack ordering and breaks the bracket balancing function.",
+  "tags": ["data-structures", "logic", "indexing", "medium"],
+  "metadata": {
+    "num_bugs": 2,
+    "lines_to_fix": 2
+  }
+}

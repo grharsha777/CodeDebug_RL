@@ -1,0 +1,70 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# CodeDebug-RL — Reward Configuration
+# ─────────────────────────────────────────────────────────────────────────────
+# Tune these values for your training setup. Defaults are calibrated for
+# GRPO-style training where rewards in [-1, 1] range are typical.
+
+# ── Core Components ──────────────────────────────────────────────────────────
+
+# Weight for partial test improvement signal
+partial_test_weight: 0.4
+
+# Large bonus when all tests pass (sparse terminal reward)
+full_solve_bonus: 1.0
+
+# Penalty per test that regresses (was passing, now fails)
+regression_penalty: -0.3
+
+# Penalty for syntactically invalid submissions
+syntax_error_penalty: -0.5
+
+# Penalty for runtime crashes
+runtime_penalty: -0.2
+
+# Penalty for timeout (hanging code)
+timeout_penalty: -0.4
+
+# ── Efficiency ───────────────────────────────────────────────────────────────
+
+# Weight for patch efficiency bonus
+patch_efficiency_weight: 0.1
+
+# Maximum diff lines that still get full efficiency credit
+max_efficient_diff_lines: 20
+
+# ── Reasoning ────────────────────────────────────────────────────────────────
+
+# Bonus for providing meaningful reasoning
+reasoning_bonus: 0.05
+
+# Minimum reasoning length (chars) to qualify for bonus
+reasoning_min_length: 20
+
+# Maximum reasoning length — longer gets reduced credit
+reasoning_max_length: 500
+
+# ── Shaping Terms ────────────────────────────────────────────────────────────
+
+# Penalty for re-submitting identical patches
+duplicate_penalty: -0.3
+
+# Penalty for submitting unchanged code
+noop_penalty: -0.2
+
+# Bonus per consecutive improvement step (capped at 5)
+improvement_streak_bonus: 0.05
+
+# Bonus per remaining step when solving early
+early_solve_bonus_per_step: 0.02
+
+# Penalty for malformed/invalid actions
+invalid_action_penalty: -0.4
+
+# ── Aggregation ──────────────────────────────────────────────────────────────
+
+# Final reward clipping range
+clip_min: -2.0
+clip_max: 2.0
+
+# Whether to normalize rewards (experimental)
+normalize: false

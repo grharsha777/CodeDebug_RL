@@ -1,0 +1,12 @@
+{
+  "task_id": "vowel_counter",
+  "difficulty": "easy",
+  "canonical_filename": "solution.py",
+  "test_filename": "test_solution.py",
+  "description": "count_vowels() only checks lowercase vowels, failing on uppercase input. The function should be case-insensitive.",
+  "tags": ["case-sensitivity", "strings", "easy"],
+  "metadata": {
+    "num_bugs": 1,
+    "lines_to_fix": 1
+  }
+}
