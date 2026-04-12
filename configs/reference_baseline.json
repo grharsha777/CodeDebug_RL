@@ -5,7 +5,7 @@
   "results": [
     {
       "task_id": "builtin_001_fizzbuzz",
-      "score": 1.0,
+      "score": 0.999,
       "success": true,
       "steps": 1,
       "transcript": [
@@ -16,7 +16,7 @@
     },
     {
       "task_id": "builtin_002_binary_search",
-      "score": 1.0,
+      "score": 0.999,
       "success": true,
       "steps": 1,
       "transcript": [

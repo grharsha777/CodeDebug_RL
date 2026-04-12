@@ -379,7 +379,7 @@ class CodeDebugEnvironment:
                 "episode_id": self._episode_id,
                 "step_duration_ms": round(step_duration * 1000, 2),
                 "is_improvement": is_improvement,
-                "grader_score": grader_score,
+                "score": grader_score,
                 "total_tests": total,
                 "passed_tests": exec_result.passed,
             }
@@ -620,7 +620,7 @@ class CodeDebugEnvironment:
             step_index=state.step_index,
             max_steps=state.max_steps,
             reward_breakdown=reward_breakdown.to_dict(),
-            cumulative_score=round(state.cumulative_reward, 4),
+            cumulative_reward=round(state.cumulative_reward, 4),
             done=state.done,
             done_reason=state.done_reason.value if state.done_reason else None,
             diff_from_previous=truncate_diff(diff_text) if diff_text else None,

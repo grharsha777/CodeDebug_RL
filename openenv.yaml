@@ -75,7 +75,7 @@ environment:
       step_index: { type: integer }
       max_steps: { type: integer }
       reward_breakdown: { type: object }
-      cumulative_score: { type: float }
+      cumulative_reward: { type: float }
       done: { type: boolean }
       done_reason: { type: string, nullable: true }
       diff_from_previous: { type: string, nullable: true }

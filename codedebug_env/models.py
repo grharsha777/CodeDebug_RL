@@ -164,7 +164,7 @@ class CodeDebugObservation(BaseModel):
     step_index: int = 0
     max_steps: int = 10
     reward_breakdown: dict[str, float] = Field(default_factory=dict)
-    cumulative_score: float = 0.0
+    cumulative_reward: float = 0.0
     done: bool = False
     done_reason: str | None = None
     diff_from_previous: str | None = None
