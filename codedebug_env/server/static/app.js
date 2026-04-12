@@ -52,7 +52,7 @@ function bindEvents() {
 async function boot() {
   setEnvStatus("Initializing", "idle");
   try {
-    const data = await api("/ui/bootstrap");
+    const data = await api("ui/bootstrap");
     S.bootstrap = data;
     S.session = data.session;
     renderAll(false);
@@ -82,11 +82,11 @@ async function refreshAll() {
 }
 
 async function refreshSession() {
-  S.session = await api("/ui/session");
+  S.session = await api("ui/session");
 }
 async function refreshMetrics() {
   if (!S.bootstrap) return;
-  try { S.bootstrap.metrics = await api("/metrics"); } catch (_) {}
+  try { S.bootstrap.metrics = await api("metrics"); } catch (_) {}
 }
 
 async function resetEpisode(taskId = null) {
@@ -99,7 +99,7 @@ async function resetEpisode(taskId = null) {
   if (tid) body.task_id = tid;
   else if (diff) body.difficulty = diff;
   try {
-    await api("/reset", { method: "POST", body: JSON.stringify(body) });
+    await api("reset", { method: "POST", body: JSON.stringify(body) });
     if (el.reasoningInput) el.reasoningInput.value = "";
     if (el.commitInput) el.commitInput.value = "";
     S.editorDirty = false;
@@ -130,7 +130,7 @@ async function submitStep() {
   if (reasoning) payload.action.reasoning = reasoning;
   if (commit) payload.action.commit_message = commit;
   try {
-    await api("/step", { method: "POST", body: JSON.stringify(payload) });
+    await api("step", { method: "POST", body: JSON.stringify(payload) });
     S.editorDirty = false;
     await Promise.all([refreshSession(), refreshMetrics()]);
     renderAll(false);
@@ -176,7 +176,7 @@ function updateSidebar() {
 
 async function healthCheck() {
   try {
-    const h = await api("/health");
+    const h = await api("health");
     if (el.sbHealth) {
       const ok = h.status === "healthy";
       el.sbHealth.innerHTML = `<span class="dot dot--${ok ? 'ok' : 'error'}"></span> ${ok ? "Healthy" : "Degraded"}`;
