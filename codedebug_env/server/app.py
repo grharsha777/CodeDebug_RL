@@ -15,7 +15,7 @@ from pathlib import Path
 from typing import Any
 
 import yaml
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
@@ -302,11 +302,27 @@ async def health() -> dict[str, str]:
 
 
 @app.post("/reset", response_model=ResetResponse)
-async def reset(request: ResetRequest | None = None) -> ResetResponse:
+async def reset(request: Request, body: ResetRequest | None = None) -> ResetResponse:
     """Reset the environment to start a new debugging episode."""
     environment = _get_env()
 
-    req = request or ResetRequest()
+    # Accept empty body (no Content-Type or empty JSON) gracefully
+    req = body
+    if req is None:
+        try:
+            raw = await request.body()
+            if raw and raw.strip():
+                import json as _json
+                try:
+                    data = _json.loads(raw)
+                    req = ResetRequest(**data)
+                except Exception:
+                    req = ResetRequest()
+            else:
+                req = ResetRequest()
+        except Exception:
+            req = ResetRequest()
+
     try:
         observation = environment.reset(
             task_id=req.task_id,

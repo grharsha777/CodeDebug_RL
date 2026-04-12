@@ -133,15 +133,23 @@ class CodeDebugEnvironment:
             task.difficulty.value,
         )
 
-        # Run baseline tests on the buggy code
-        baseline_result = execute_submission(
-            source_code=task.buggy_code,
-            test_code=task.test_code,
-            source_filename=task.canonical_filename,
-            test_filename=task.test_filename,
-            timeout_s=self.execution_timeout_s,
-            sandbox_config=self.sandbox_config,
-        )
+        # Run baseline tests on the buggy code (non-fatal — execution may fail in restricted envs)
+        try:
+            baseline_result = execute_submission(
+                source_code=task.buggy_code,
+                test_code=task.test_code,
+                source_filename=task.canonical_filename,
+                test_filename=task.test_filename,
+                timeout_s=self.execution_timeout_s,
+                sandbox_config=self.sandbox_config,
+            )
+        except Exception as exc:
+            logger.warning("Baseline execution failed (non-fatal): %s", exc)
+            baseline_result = ExecutionResult(
+                status=ExecutionStatus.CRASH,
+                syntax_valid=True,
+                error_detail=f"Baseline execution unavailable: {exc}",
+            )
 
         # Initialize episode state
         self._state = CodeDebugState(
