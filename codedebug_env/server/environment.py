@@ -370,7 +370,10 @@ class CodeDebugEnvironment:
                 is_improvement = False
 
             total = exec_result.total_tests
-            grader_score = (float(exec_result.passed) / float(total)) if total > 0 else 0.0
+            # IMPORTANT: grader_score must be in open interval (0, 1) per validator rules.
+            raw_grader_score = (float(exec_result.passed) / float(total)) if total > 0 else 0.0
+            _eps = 0.001
+            grader_score = max(_eps, min(1.0 - _eps, raw_grader_score))
 
             info: dict[str, Any] = {
                 "episode_id": self._episode_id,

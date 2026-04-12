@@ -1,6 +1,12 @@
 {
   "task_id": "infinite_loop",
   "difficulty": "medium",
-  "description": "The calculate_sum function causes the program to hang. Please fix it so that it terminates properly.",
-  "tags": ["timeout", "loops", "medium"]
+  "canonical_filename": "solution.py",
+  "test_filename": "test_solution.py",
+  "description": "The calculate_sum function causes the program to hang because i is never incremented. Fix it so that it terminates properly and returns the correct sum.",
+  "tags": ["timeout", "loops", "medium"],
+  "metadata": {
+    "num_bugs": 1,
+    "lines_to_fix": 1
+  }
 }

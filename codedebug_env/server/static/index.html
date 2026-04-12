@@ -3,254 +3,307 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CodeDebug-RL</title>
+  <title>CodeDebug-RL — OpenEnv Benchmark</title>
+  <meta name="description" content="Enterprise RL environment for training self-correcting coding agents through iterative bug repair.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/static/app.css">
 </head>
 <body>
-  <div class="app-shell">
-    <header class="hero panel">
-      <div class="hero-copy">
-        <div class="eyebrow">OpenEnv benchmark workbench</div>
-        <h1 id="hero-title">CodeDebug-RL</h1>
-        <p id="hero-subtitle" class="hero-subtitle">
-          Loading benchmark profile...
-        </p>
-        <div id="proof-strip" class="proof-strip"></div>
-      </div>
-      <div class="hero-side">
-        <div class="mini-metric">
-          <span class="label">Tasks</span>
-          <strong id="hero-task-count">-</strong>
-        </div>
-        <div class="mini-metric">
-          <span class="label">Baseline avg.</span>
-          <strong id="hero-baseline-score">-</strong>
-        </div>
-        <div class="mini-metric">
-          <span class="label">Validation</span>
-          <strong id="hero-validation">-</strong>
-        </div>
-      </div>
-    </header>
+  <div class="app-root">
 
-    <section class="process-rail panel">
-      <div class="rail-step">
-        <span class="step-index">01</span>
+    <!-- ── Sidebar ─────────────────────────────────────────────────── -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-icon">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M3 5h14M3 10h8M3 15h11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            <circle cx="15" cy="10" r="3" stroke="var(--accent)" stroke-width="1.5"/>
+          </svg>
+        </div>
         <div>
-          <strong>Load task</strong>
-          <p>Buggy Python source, deterministic tests, difficulty-tagged metadata.</p>
+          <div class="brand-name">CodeDebug-RL</div>
+          <div class="brand-tag">OpenEnv v1.0</div>
         </div>
       </div>
-      <div class="rail-step">
-        <span class="step-index">02</span>
-        <div>
-          <strong>Submit patch</strong>
-          <p>Full replace or diff-based repair with optional reasoning.</p>
+
+      <div class="sidebar-section-label">WORKSPACE</div>
+      <nav class="sidebar-nav">
+        <button class="nav-item is-active" data-tab="workbench" id="nav-workbench">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="9" y="1" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="1" y="9" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="9" y="9" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/></svg>
+          Workbench
+        </button>
+        <button class="nav-item" data-tab="benchmark" id="nav-benchmark">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><polyline points="1,12 5,7 9,9 15,3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Benchmark
+        </button>
+        <button class="nav-item" data-tab="system" id="nav-system">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="3" stroke="currentColor" stroke-width="1.5"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          System
+        </button>
+      </nav>
+
+      <div class="sidebar-section-label" style="margin-top:auto">METRICS</div>
+      <div class="sidebar-metrics">
+        <div class="metric-row">
+          <span class="metric-label">Tasks loaded</span>
+          <span class="metric-value" id="sb-task-count">—</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">Baseline avg</span>
+          <span class="metric-value accent" id="sb-baseline">—</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">HF Space</span>
+          <span class="metric-value" id="sb-health"><span class="dot dot--idle"></span> Checking</span>
         </div>
       </div>
-      <div class="rail-step">
-        <span class="step-index">03</span>
-        <div>
-          <strong>Run grader</strong>
-          <p>Syntax validation, sandboxed pytest, failure capture, timeout protection.</p>
+    </aside>
+
+    <!-- ── Main content ────────────────────────────────────────────── -->
+    <div class="main-content">
+
+      <!-- Top bar -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <div class="breadcrumb" id="breadcrumb">Workbench</div>
+          <div class="topbar-episode" id="topbar-episode"></div>
         </div>
+        <div class="topbar-right">
+          <div class="status-pill" id="env-status-pill">
+            <span class="dot dot--idle" id="env-dot"></span>
+            <span id="env-status-text">Initializing</span>
+          </div>
+          <button class="btn btn-sm btn-ghost" id="refresh-btn" title="Refresh data">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M12 7a5 5 0 11-1.5-3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><polyline points="10,1 12,3.5 9.5,5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </header>
+
+      <!-- Tab panels -->
+      <div class="panels">
+
+        <!-- ── WORKBENCH TAB ─────────────────────────────────────── -->
+        <section class="tab-panel is-active" data-panel="workbench">
+
+          <!-- Hero stripe -->
+          <div class="hero-stripe">
+            <div class="hero-text">
+              <div class="hero-eyebrow">OpenEnv · Iterative Repair Benchmark</div>
+              <h1 class="hero-title" id="hero-title">CodeDebug-RL</h1>
+              <p class="hero-subtitle" id="hero-subtitle">A real-world RL environment for training self-correcting code agents through dense reward shaping and sandboxed execution.</p>
+            </div>
+            <div class="hero-proof" id="proof-strip"></div>
+            <div class="hero-kpis">
+              <div class="kpi-card">
+                <div class="kpi-value" id="hero-task-count">—</div>
+                <div class="kpi-label">Graded tasks</div>
+              </div>
+              <div class="kpi-card">
+                <div class="kpi-value accent" id="hero-baseline-score">—</div>
+                <div class="kpi-label">Baseline avg</div>
+              </div>
+              <div class="kpi-card">
+                <div class="kpi-value" id="hero-validation">
+                  <span class="dot dot--ok"></span> Valid
+                </div>
+                <div class="kpi-label">OpenEnv spec</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Process pipeline -->
+          <div class="pipeline-rail">
+            <div class="pipeline-step"><span class="step-num">01</span><div><strong>Load task</strong><p>Buggy Python source, deterministic tests, difficulty-tagged metadata.</p></div></div>
+            <div class="pipeline-arrow">›</div>
+            <div class="pipeline-step"><span class="step-num">02</span><div><strong>Submit patch</strong><p>Full replace or diff-based repair with optional reasoning.</p></div></div>
+            <div class="pipeline-arrow">›</div>
+            <div class="pipeline-step"><span class="step-num">03</span><div><strong>Run grader</strong><p>Syntax validation, sandboxed pytest, failure capture, timeout protection.</p></div></div>
+            <div class="pipeline-arrow">›</div>
+            <div class="pipeline-step"><span class="step-num">04</span><div><strong>Score trajectory</strong><p>Normalized score for benchmarking, dense reward for learning.</p></div></div>
+            <div class="pipeline-arrow">›</div>
+            <div class="pipeline-step"><span class="step-num">05</span><div><strong>Update episode</strong><p>Step history, regressions, best pass rate, telemetry, done reason.</p></div></div>
+          </div>
+
+          <!-- Summary bar -->
+          <div class="summary-bar panel" id="summary-bar"></div>
+
+          <!-- Two-pane workspace -->
+          <div class="workspace-split">
+
+            <!-- LEFT: Code panel -->
+            <section class="ws-pane panel code-pane">
+              <div class="pane-header">
+                <div>
+                  <div class="pane-eyebrow">Episode workspace</div>
+                  <h2 class="pane-title">Patch submission</h2>
+                </div>
+                <div class="pane-header-right">
+                  <div class="status-chip" id="run-status-chip">Idle</div>
+                </div>
+              </div>
+
+              <div class="control-row">
+                <label class="field-group">
+                  <span class="field-label">Task</span>
+                  <select id="task-select" class="select"></select>
+                </label>
+                <label class="field-group">
+                  <span class="field-label">Difficulty</span>
+                  <select id="difficulty-select" class="select">
+                    <option value="">Any</option>
+                    <option value="easy">Easy</option>
+                    <option value="medium">Medium</option>
+                    <option value="hard">Hard</option>
+                  </select>
+                </label>
+                <label class="field-group">
+                  <span class="field-label">Patch format</span>
+                  <select id="patch-format" class="select">
+                    <option value="full_replace">Full replace</option>
+                    <option value="unified_diff">Unified diff</option>
+                  </select>
+                </label>
+              </div>
+
+              <div class="editor-block">
+                <div class="editor-header">
+                  <span id="editor-task-label" class="editor-filename">No active task</span>
+                  <span id="editor-difficulty-label" class="diff-badge diff-badge--idle">Idle</span>
+                </div>
+                <textarea id="code-editor" class="code-editor" spellcheck="false"></textarea>
+              </div>
+
+              <div class="aux-row">
+                <label class="field-group grow">
+                  <span class="field-label">Reasoning</span>
+                  <textarea id="reasoning-input" class="textarea-sm" placeholder="Describe the bug, the root cause, and what change you are making..."></textarea>
+                </label>
+                <label class="field-group">
+                  <span class="field-label">Commit message</span>
+                  <input id="commit-input" class="input-sm" type="text" placeholder="fix: tighten binary search bounds">
+                </label>
+              </div>
+
+              <div class="action-row">
+                <button id="reset-button" class="btn btn-secondary">
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7a5 5 0 1 0 1-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><polyline points="1,1 2,4 5,3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  Reset episode
+                </button>
+                <button id="submit-button" class="btn btn-primary">
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><polygon points="3,2 13,7 3,12" fill="currentColor"/></svg>
+                  Run step
+                </button>
+              </div>
+            </section>
+
+            <!-- RIGHT: Evaluation inspector -->
+            <section class="ws-pane panel eval-pane">
+              <div class="pane-header">
+                <div>
+                  <div class="pane-eyebrow">Evaluation inspector</div>
+                  <h2 class="pane-title">Run analysis</h2>
+                </div>
+              </div>
+              <div id="evaluation-root" class="eval-body"></div>
+            </section>
+
+          </div>
+
+          <!-- Analytics row -->
+          <div class="analytics-row">
+            <section class="panel analytics-card">
+              <div class="pane-header">
+                <div class="pane-eyebrow">Trajectory</div>
+                <h2 class="pane-title">Score &amp; reward progression</h2>
+              </div>
+              <div id="chart-root" class="chart-area"></div>
+            </section>
+
+            <section class="panel analytics-card">
+              <div class="pane-header">
+                <div class="pane-eyebrow">History</div>
+                <h2 class="pane-title">Episode timeline</h2>
+              </div>
+              <div id="history-root" class="history-area"></div>
+            </section>
+
+            <section class="panel analytics-card">
+              <div class="pane-header">
+                <div class="pane-eyebrow">Metadata</div>
+                <h2 class="pane-title">Task &amp; system context</h2>
+              </div>
+              <div id="metadata-root" class="metadata-area"></div>
+            </section>
+          </div>
+        </section>
+
+        <!-- ── BENCHMARK TAB ─────────────────────────────────────── -->
+        <section class="tab-panel" data-panel="benchmark">
+          <div class="section-header">
+            <h2>Task Benchmark</h2>
+            <p>Curated grading tasks across difficulty tiers. Each task is independently scored and validated.</p>
+          </div>
+          <div class="benchmark-grid">
+            <section class="panel">
+              <div class="pane-header">
+                <div class="pane-eyebrow">Benchmark status</div>
+                <h2 class="pane-title">Submission readiness</h2>
+              </div>
+              <div id="benchmark-overview" class="stat-grid-3"></div>
+            </section>
+            <section class="panel">
+              <div class="pane-header">
+                <div class="pane-eyebrow">Task ladder</div>
+                <h2 class="pane-title">Graded tasks by difficulty</h2>
+              </div>
+              <div id="task-table-root" class="table-scroll"></div>
+            </section>
+            <section class="panel">
+              <div class="pane-header">
+                <div class="pane-eyebrow">Baseline &amp; telemetry</div>
+                <h2 class="pane-title">Recent benchmark evidence</h2>
+              </div>
+              <div id="baseline-root"></div>
+              <div id="recent-episodes-root" class="table-scroll mt-8"></div>
+            </section>
+          </div>
+        </section>
+
+        <!-- ── SYSTEM TAB ────────────────────────────────────────── -->
+        <section class="tab-panel" data-panel="system">
+          <div class="section-header">
+            <h2>System &amp; Compliance</h2>
+            <p>OpenEnv spec compliance, deployment checklist, and API contracts.</p>
+          </div>
+          <div class="system-grid">
+            <section class="panel">
+              <div class="pane-header">
+                <div class="pane-eyebrow">Compliance</div>
+                <h2 class="pane-title">OpenEnv &amp; deployment checklist</h2>
+              </div>
+              <div id="compliance-root" class="stat-grid-2"></div>
+            </section>
+            <section class="panel">
+              <div class="pane-header">
+                <div class="pane-eyebrow">Contracts</div>
+                <h2 class="pane-title">API &amp; environment schema</h2>
+              </div>
+              <div id="api-root" class="api-columns"></div>
+            </section>
+            <section class="panel">
+              <div class="pane-header">
+                <div class="pane-eyebrow">Raw specification</div>
+                <h2 class="pane-title">OpenEnv metadata</h2>
+              </div>
+              <div id="spec-root" class="spec-area"></div>
+            </section>
+          </div>
+        </section>
+
       </div>
-      <div class="rail-step">
-        <span class="step-index">04</span>
-        <div>
-          <strong>Score trajectory</strong>
-          <p>Normalized score for benchmarking, dense reward for learning.</p>
-        </div>
-      </div>
-      <div class="rail-step">
-        <span class="step-index">05</span>
-        <div>
-          <strong>Update episode</strong>
-          <p>Step history, regressions, best pass rate, telemetry, done reason.</p>
-        </div>
-      </div>
-    </section>
-
-    <section id="summary-bar" class="summary-bar panel"></section>
-
-    <nav class="tabbar panel">
-      <button class="tab is-active" data-tab="workbench">Workbench</button>
-      <button class="tab" data-tab="benchmark">Benchmark</button>
-      <button class="tab" data-tab="system">System</button>
-    </nav>
-
-    <main>
-      <section class="tab-panel is-active" data-panel="workbench">
-        <div class="workspace-grid">
-          <section class="panel code-panel">
-            <div class="panel-heading">
-              <div>
-                <div class="eyebrow">Episode workspace</div>
-                <h2>Patch submission</h2>
-              </div>
-              <div id="run-status-chip" class="status-chip neutral">Idle</div>
-            </div>
-            <div class="control-grid">
-              <label class="field">
-                <span>Task</span>
-                <select id="task-select"></select>
-              </label>
-              <label class="field">
-                <span>Difficulty</span>
-                <select id="difficulty-select">
-                  <option value="">Any</option>
-                  <option value="easy">Easy</option>
-                  <option value="medium">Medium</option>
-                  <option value="hard">Hard</option>
-                </select>
-              </label>
-              <label class="field">
-                <span>Patch format</span>
-                <select id="patch-format">
-                  <option value="full_replace">Full replace</option>
-                  <option value="unified_diff">Unified diff</option>
-                </select>
-              </label>
-            </div>
-
-            <div class="editor-frame">
-              <div class="editor-toolbar">
-                <span id="editor-task-label">No active task</span>
-                <span id="editor-difficulty-label" class="badge neutral">Idle</span>
-              </div>
-              <textarea id="code-editor" spellcheck="false" class="code-editor"></textarea>
-            </div>
-
-            <div class="aux-grid">
-              <label class="field grow">
-                <span>Reasoning</span>
-                <textarea id="reasoning-input" class="input input-multi" placeholder="Explain the bug, expected impact, or debugging hypothesis."></textarea>
-              </label>
-              <label class="field">
-                <span>Commit message</span>
-                <input id="commit-input" class="input" type="text" placeholder="fix: tighten binary search bounds">
-              </label>
-            </div>
-
-            <div class="action-row">
-              <button id="reset-button" class="button secondary">Reset episode</button>
-              <button id="submit-button" class="button primary">Run step</button>
-            </div>
-          </section>
-
-          <section class="panel evaluation-panel">
-            <div class="panel-heading">
-              <div>
-                <div class="eyebrow">Evaluation inspector</div>
-                <h2>Run analysis</h2>
-              </div>
-            </div>
-            <div id="evaluation-root" class="evaluation-root"></div>
-          </section>
-        </div>
-
-        <div class="analytics-grid">
-          <section class="panel">
-            <div class="panel-heading">
-              <div>
-                <div class="eyebrow">Trajectory</div>
-                <h2>Score and reward progression</h2>
-              </div>
-            </div>
-            <div id="chart-root" class="chart-root"></div>
-          </section>
-
-          <section class="panel">
-            <div class="panel-heading">
-              <div>
-                <div class="eyebrow">History</div>
-                <h2>Episode timeline</h2>
-              </div>
-            </div>
-            <div id="history-root" class="history-root"></div>
-          </section>
-
-          <section class="panel metadata-panel">
-            <div class="panel-heading">
-              <div>
-                <div class="eyebrow">Metadata</div>
-                <h2>Task and system context</h2>
-              </div>
-            </div>
-            <div id="metadata-root" class="metadata-root"></div>
-          </section>
-        </div>
-      </section>
-
-      <section class="tab-panel" data-panel="benchmark">
-        <div class="benchmark-grid">
-          <section class="panel">
-            <div class="panel-heading">
-              <div>
-                <div class="eyebrow">Benchmark status</div>
-                <h2>Submission readiness</h2>
-              </div>
-            </div>
-            <div id="benchmark-overview" class="stat-grid"></div>
-          </section>
-
-          <section class="panel">
-            <div class="panel-heading">
-              <div>
-                <div class="eyebrow">Task ladder</div>
-                <h2>Curated grading tasks</h2>
-              </div>
-            </div>
-            <div id="task-table-root" class="table-wrap"></div>
-          </section>
-
-          <section class="panel">
-            <div class="panel-heading">
-              <div>
-                <div class="eyebrow">Baseline and telemetry</div>
-                <h2>Recent benchmark evidence</h2>
-              </div>
-            </div>
-            <div id="baseline-root" class="baseline-root"></div>
-            <div id="recent-episodes-root" class="table-wrap compact-top"></div>
-          </section>
-        </div>
-      </section>
-
-      <section class="tab-panel" data-panel="system">
-        <div class="system-grid">
-          <section class="panel">
-            <div class="panel-heading">
-              <div>
-                <div class="eyebrow">Compliance</div>
-                <h2>OpenEnv and deployment checklist</h2>
-              </div>
-            </div>
-            <div id="compliance-root" class="stat-grid"></div>
-          </section>
-
-          <section class="panel">
-            <div class="panel-heading">
-              <div>
-                <div class="eyebrow">Contracts</div>
-                <h2>API and environment schema</h2>
-              </div>
-            </div>
-            <div id="api-root" class="api-grid"></div>
-          </section>
-
-          <section class="panel">
-            <div class="panel-heading">
-              <div>
-                <div class="eyebrow">Raw specification</div>
-                <h2>OpenEnv metadata</h2>
-              </div>
-            </div>
-            <div id="spec-root" class="spec-grid"></div>
-          </section>
-        </div>
-      </section>
-    </main>
+    </div>
   </div>
 
   <script src="/static/app.js" defer></script>
