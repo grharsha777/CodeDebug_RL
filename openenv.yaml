@@ -81,6 +81,10 @@ environment:
       diff_from_previous: { type: string, nullable: true }
       hint: { type: string, nullable: true }
 
+  state_space:
+    type: object
+    model: codedebug_env.models.CodeDebugState
+
 # ─── Docker Configuration ────────────────────────────────────────────────────
 
 docker:

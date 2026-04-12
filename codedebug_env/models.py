@@ -264,8 +264,8 @@ class RewardConfig(BaseModel):
     invalid_action_penalty: float = -0.4
 
     # Aggregation
-    clip_min: float = -2.0
-    clip_max: float = 2.0
+    clip_min: float = 0.0
+    clip_max: float = 1.0
     normalize: bool = False
 
 
